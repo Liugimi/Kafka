@@ -1,6 +1,5 @@
 # MusicLearn - Sistema de Aprendizaje Musical con Notificaciones en Tiempo Real
 
-![MusicLearn Logo](MusicLearn.png)
 
 ## Descripción
 
@@ -71,3 +70,146 @@ bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-fac
 bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3 --topic musiclearn.ensambles
 bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3 --topic musiclearn.usuarios
 bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3 --topic musiclearn.analytics```
+
+### 4. Instalar la extensión RdKafka para PHP
+
+bash
+# En sistemas basados en Debian/Ubuntu
+sudo apt-get install librdkafka-dev
+sudo pecl install rdkafka
+
+# Añadir a php.ini
+echo "extension=rdkafka.so" | sudo tee -a /etc/php/7.4/cli/php.ini
+echo "extension=rdkafka.so" | sudo tee -a /etc/php/7.4/apache2/php.ini
+
+
+### 5. Configurar la conexión Kafka
+
+Edita el archivo kafka_integration.php para configurar la conexión con tu broker Kafka:
+
+php
+// Configuración de Kafka
+$kafkaConfig = [
+    'brokers' => 'localhost:9092', // Cambia esto según tu configuración
+    'topics' => [
+        'musiclearn.lecciones',
+        'musiclearn.ensambles',
+        'musiclearn.usuarios',
+        'musiclearn.analytics'
+    ]
+];
+
+
+## Estructura del Proyecto
+
+
+musiclearn/
+├── index.html            # Página principal
+├── styles.css            # Estilos CSS
+├── script.js             # Lógica de cliente con integración Kafka
+├── kafka_integration.php # Integración backend con Kafka
+├── lecciones.php         # Página de lecciones (implementar)
+├── ensamble.php          # Página de ensambles (implementar)
+├── perfil.php            # Página de perfil (implementar)
+├── cerrarsesion.php      # Script de cierre de sesión
+├── MusicLearn.png        # Logo de la aplicación
+└── README.md             # Documentación
+
+
+## Uso del Sistema
+
+### Ejecución del Cliente
+
+1. Accede a la aplicación mediante tu navegador web
+2. Haz clic en "Suscribirse a notificaciones" para activar las notificaciones en tiempo real
+3. Explora las secciones "Lecciones" y "Ensamble" para acceder al contenido educativo
+
+### Ejecución del Consumidor Kafka
+
+Para iniciar el procesamiento de mensajes en segundo plano:
+
+bash
+php -f kafka_consumer.php
+
+
+## Implementación del Patrón Publicador-Suscriptor
+
+### Componentes clave:
+
+1. *Publicadores (Producers)*:
+   - Sistemas que generan eventos como nuevas lecciones o invitaciones a ensambles
+   - Implementados en kafka_integration.php con funciones como sendKafkaMessage()
+
+2. *Broker (Kafka)*:
+   - Intermediario central que gestiona tópicos y mensajes
+   - Garantiza la entrega y persistencia de los eventos
+
+3. *Suscriptores (Consumers)*:
+   - Cliente web que recibe y muestra notificaciones en tiempo real
+   - Implementado en script.js con la función initKafkaNotifications()
+
+4. *Tópicos (Topics)*:
+   - Canales temáticos donde se publican mensajes específicos
+   - Incluye musiclearn.lecciones, musiclearn.ensambles, musiclearn.usuarios y musiclearn.analytics
+
+## Personalización
+
+### Colores y Estilos
+
+Los colores principales del tema se pueden modificar en el archivo styles.css:
+
+css
+:root {
+    --color-primary: #5D43A4;
+    --color-secondary: #393DC5;
+    --color-dark: #171945;
+    --color-black: #000;
+    --color-white: #fff;
+}
+
+
+### Configuración de Notificaciones
+
+Para ajustar la frecuencia y comportamiento de las notificaciones, edita estos parámetros en script.js:
+
+javascript
+// Simular recepción de mensajes de Kafka periódicamente
+setInterval(() => {
+    // Tu código aquí
+}, 10000); // Cambiar este valor para modificar la frecuencia (en milisegundos)
+
+
+## Posibles Problemas y Soluciones
+
+| Problema | Solución |
+|----------|----------|
+| No se muestran notificaciones | Verifica que Kafka esté en ejecución y que los tópicos estén creados correctamente |
+| Error de conexión RdKafka | Asegúrate de que la extensión esté instalada y configurada en php.ini |
+| El menú desplegable no funciona | Verifica que estés incluyendo Font Awesome para los iconos |
+| La estilización no se aplica | Asegúrate de que los archivos CSS estén correctamente vinculados en el HTML |
+
+## Contribuir
+
+Las contribuciones son bienvenidas. Para contribuir:
+
+1. Haz un Fork del repositorio
+2. Crea una rama para tu funcionalidad (git checkout -b feature/nueva-funcionalidad)
+3. Realiza tus cambios y haz commit (git commit -m 'Añadir nueva funcionalidad')
+4. Sube tus cambios (git push origin feature/nueva-funcionalidad)
+5. Abre un Pull Request
+
+## Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
+
+## Contacto y Soporte
+
+Para soporte técnico, contacta a cualquiera de los desarrolladores:
+
+- José Antonio Ávila Tolosa - javilatolosa@ucundinamarca.edu.co - 3114047030
+- Luis Miguel Ortegón Vargas - lmiguelortegon@ucundinamarca.edu.co - 3213823224
+- Juan Pablo Ramírez Lozano - jpabloramirez@ucundinamarca.edu.co - 3192752702
+
+---
+
+&copy; MusicLearn 2025 - Desarrollado como proyecto educativo para la Universidad de Cundinamarca
